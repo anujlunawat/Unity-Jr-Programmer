@@ -1,0 +1,728 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Unity Project Optimization</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 99, 174, 0.172); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="26623fc6-f280-80e5-9369-c503bff9a9b3" class="page mono"><header><h1 class="page-title">Unity Project Optimization</h1><p class="page-description"></p></header><div class="page-body"><h3 id="26623fc6-f280-8065-8de7-d50d0d84175a" class="">1. Variable Attributes</h3><ul id="26623fc6-f280-806d-9de1-f22210e1c07b" class="bulleted-list"><li style="list-style-type:disc"><code>[SerializeField]:</code> <ul id="26623fc6-f280-80f6-a884-d2b22840a19b" class="bulleted-list"><li style="list-style-type:circle">attribute you put before a field in your script to make it visible and editable in the <strong>Inspector</strong>, even if that field is <strong>private</strong> or <strong>protected</strong>.</li></ul></li></ul><ul id="26623fc6-f280-8011-8652-dcd0bd884b6d" class="bulleted-list"><li style="list-style-type:disc"><code>[System.NonSerialized]</code>: <ul id="26623fc6-f280-8030-9539-e361f845c237" class="bulleted-list"><li style="list-style-type:circle">tells Unity <strong>don’t serialize this field</strong>, so <strong>Inspector hides it</strong>. </li></ul><ul id="26623fc6-f280-8000-9877-f049f389edc6" class="bulleted-list"><li style="list-style-type:circle">Fields marked <code>[NonSerialized]</code> (or with <code>static</code>, <code>const</code>, <code>readonly</code>) won’t show up in the inspector</li></ul></li></ul><ul id="26623fc6-f280-8061-8e71-c4e40e246beb" class="bulleted-list"><li style="list-style-type:disc"><code>[Header]: </code><ul id="26623fc6-f280-806e-955a-ee18c1dc4ebe" class="bulleted-list"><li style="list-style-type:circle">an Inspector attribute that lets you add a text heading above a field (or group of fields).</li></ul><ul id="26623fc6-f280-805f-8351-e2b66ff18b47" class="bulleted-list"><li style="list-style-type:circle">It doesn’t affect your code at all — it’s only for organizing how things look in the inspector.</li></ul><p id="26623fc6-f280-8071-b3f9-d511f9622792" class="">
+</p></li></ul><hr id="26623fc6-f280-8097-95e6-d376eae1d9e9"/><p id="26623fc6-f280-8076-af3f-f885d88b115f" class="">
+</p><h3 id="26623fc6-f280-8065-9aee-cecf0192380c" class="">2. Unity Event Functions</h3><ul id="26623fc6-f280-80bf-adc1-fe348c70b30b" class="bulleted-list"><li style="list-style-type:disc"><code>Update()</code>:<ul id="26623fc6-f280-80aa-bff9-f42075474f0f" class="bulleted-list"><li style="list-style-type:circle">Called <strong>once per frame</strong>.</li></ul><ul id="26623fc6-f280-8042-83f6-c08f58a5d3b5" class="bulleted-list"><li style="list-style-type:circle">Frame-rate dependent.</li></ul><ul id="26623fc6-f280-803d-8044-d3a90e24007a" class="bulleted-list"><li style="list-style-type:circle">Good for <strong>regular gameplay logic</strong> (movement, input checks, timers, visuals, UI).</li></ul></li></ul><ul id="26623fc6-f280-80c7-80da-ca20aefe5541" class="bulleted-list"><li style="list-style-type:disc"><code>LateUpdate()</code>:<ul id="26623fc6-f280-80d4-b872-c0fde5dd11b6" class="bulleted-list"><li style="list-style-type:circle">Called <strong>after all </strong><code><strong>Update()</strong></code><strong> methods</strong> have run in that frame.</li></ul><ul id="26623fc6-f280-8098-b720-f1710fdabd0a" class="bulleted-list"><li style="list-style-type:circle">Good for things that must happen <strong>after movement/logic updates</strong> (e.g., camera follow).</li></ul><ul id="26623fc6-f280-807d-8b77-c92378b2f189" class="bulleted-list"><li style="list-style-type:circle">Use when something must happen after other objects have updated.</li></ul><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="26623fc6-f280-809f-a492-dbc4b0f79208"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Logic:</strong></summary><div class="indented"><ul id="26623fc6-f280-80c3-95ba-e7edd69b64ea" class="bulleted-list"><li style="list-style-type:disc">Unity loops through <strong>all active scripts</strong> in the scene and calls their <code>Update()</code> methods.<ul id="26623fc6-f280-806c-be95-c20d07dd869f" class="bulleted-list"><li style="list-style-type:circle">Every <code>MonoBehaviour</code> script that has an <code>Update()</code> method will have that method called <strong>once per frame</strong>.</li></ul></li></ul><ul id="26623fc6-f280-800f-9431-f67ab03ae8ca" class="bulleted-list"><li style="list-style-type:disc">After Unity has finished calling <strong>every single </strong><code><strong>Update()</strong></code><strong> across all scripts</strong>, then it moves on and calls all <code>LateUpdate()</code> methods.</li></ul><p id="26623fc6-f280-80b2-8fd7-e9d936306355" class="">So the order is:</p><ol type="1" id="26623fc6-f280-8010-bd57-e0b7395b527b" class="numbered-list" start="1"><li>Unity: calls <code>Update()</code> on Script A</li></ol><ol type="1" id="26623fc6-f280-8042-949c-c0de685de4de" class="numbered-list" start="2"><li>Unity: calls <code>Update()</code> on Script B</li></ol><ol type="1" id="26623fc6-f280-80bc-bb4c-ef502535e098" class="numbered-list" start="3"><li>Unity: calls <code>Update()</code> on Script C<p id="26623fc6-f280-804a-b0f5-c3e26ebea9e1" class="">… continues for all scripts with Update</p></li></ol><ol type="1" id="26623fc6-f280-8073-ac20-e6b5e3c976d8" class="numbered-list" start="4"><li>Unity: once all Updates are finished → calls <code>LateUpdate()</code> on Script A</li></ol><ol type="1" id="26623fc6-f280-806c-b403-f8e38b562fcd" class="numbered-list" start="5"><li>Then <code>LateUpdate()</code> on Script B, etc.</li></ol></div></details></div></figure></li></ul><ul id="26623fc6-f280-802f-a565-f7ff9db67e8b" class="bulleted-list"><li style="list-style-type:disc"><code>FixedUpdate()</code>:<ul id="26623fc6-f280-8076-9960-fb2c63d0e5eb" class="bulleted-list"><li style="list-style-type:circle">Runs at a <strong>fixed timestep</strong> (default 0.02s = 50 times/sec).</li></ul><ul id="26623fc6-f280-8088-9682-ceee06e923e3" class="bulleted-list"><li style="list-style-type:circle">Independent of frame rate.</li></ul><ul id="26623fc6-f280-809d-a8db-d9eb906393ac" class="bulleted-list"><li style="list-style-type:circle">May run <strong>more than once per frame</strong> (if your frame takes longer than 0.02s), or <strong>less often</strong> (if frame rate is very high).</li></ul><ul id="26623fc6-f280-808a-a0e5-e80cdcfa6bba" class="bulleted-list"><li style="list-style-type:circle">Good for: <strong>physics, Rigidbody movement, forces</strong>.</li></ul><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="26623fc6-f280-80bb-8661-f6b4cb968511"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Example Scenarios</summary><div class="indented"><h3 id="26623fc6-f280-80ef-a7c8-ce85636d691f" class="">Case 1: <strong>High FPS (e.g., 120 FPS)</strong></h3><ul id="26623fc6-f280-80fa-a166-cecd55537cd3" class="bulleted-list"><li style="list-style-type:disc"><code>Update()</code> → called <strong>120 times/sec</strong>.</li></ul><ul id="26623fc6-f280-80cf-8552-c0162988ea8b" class="bulleted-list"><li style="list-style-type:disc"><code>FixedUpdate()</code> → still only <strong>50 times/sec</strong> (unless you change Time.fixedDeltaTime).</li></ul><ul id="26623fc6-f280-8024-90c9-cbfeb128d719" class="bulleted-list"><li style="list-style-type:disc">👉 So yes, <code>Update()</code> is called more often.</li></ul><h3 id="26623fc6-f280-8074-8872-e8f24fae398f" class="">Case 2: <strong>Low FPS (e.g., 20 FPS)</strong></h3><ul id="26623fc6-f280-8027-ae5f-cd3ccbf7afe1" class="bulleted-list"><li style="list-style-type:disc"><code>Update()</code> → called <strong>20 times/sec</strong>.</li></ul><ul id="26623fc6-f280-8093-a8ba-ffe8cc37cbe6" class="bulleted-list"><li style="list-style-type:disc"><code>FixedUpdate()</code> → still <strong>50 times/sec</strong>.</li></ul><ul id="26623fc6-f280-8042-9ca5-db3557fbf54c" class="bulleted-list"><li style="list-style-type:disc">Unity will run multiple FixedUpdates before rendering the next frame, to “catch up” physics.</li></ul></div></details></div></figure></li></ul><ul id="26623fc6-f280-807f-9e3b-d3eabb98c278" class="bulleted-list"><li style="list-style-type:disc"><code>Awake()</code>:<ul id="26623fc6-f280-80c7-bed2-fbf25ab43f97" class="bulleted-list"><li style="list-style-type:circle">Called <strong>before</strong> <code>Start()</code>.</li></ul><ul id="26623fc6-f280-80a4-ad40-ef1d8fba2981" class="bulleted-list"><li style="list-style-type:circle">Called <strong>even if the GameObject is disabled</strong> (unlike <code>Start()</code>).</li></ul><ul id="26623fc6-f280-8078-8d85-f6d60d7670b5" class="bulleted-list"><li style="list-style-type:circle">Runs <strong>only once</strong> in the object&#x27;s lifetime (unless the object is destroyed and re-instantiated or the scene is reloaded).</li></ul><ul id="26623fc6-f280-8062-a386-d8342b07d519" class="bulleted-list"><li style="list-style-type:circle">Used for <strong>initialization that doesn’t depend on other scripts being enabled</strong>.</li></ul></li></ul><ul id="26623fc6-f280-80cf-806d-c1be68dbe55e" class="bulleted-list"><li style="list-style-type:disc"><code>OnEnable()</code>:<ul id="26623fc6-f280-801d-9a52-e8609beaafbd" class="bulleted-list"><li style="list-style-type:circle">Called <strong>every time</strong> a script or GameObject becomes <strong>enabled and active</strong>.</li></ul><ul id="26623fc6-f280-8025-9cba-e4cce8164dba" class="bulleted-list"><li style="list-style-type:circle">This includes:<ul id="26623fc6-f280-8090-a276-c46682be5e23" class="bulleted-list"><li style="list-style-type:square">When the scene starts (if the GameObject is active)</li></ul><ul id="26623fc6-f280-80e6-9715-ccfa519ae76c" class="bulleted-list"><li style="list-style-type:square">Every time you call <code>gameObject.SetActive(true)</code></li></ul><ul id="26623fc6-f280-807d-a521-efaa0eb54518" class="bulleted-list"><li style="list-style-type:square">Every time you enable the <strong>component </strong>(<code>myScript.enabled = true</code>)</li></ul></li></ul></li></ul><ul id="26623fc6-f280-802e-9f81-d5fe4afcfcb1" class="bulleted-list"><li style="list-style-type:disc"><code>OnDisable()</code>:<ul id="26623fc6-f280-80c6-b32a-dd4293cda49d" class="bulleted-list"><li style="list-style-type:circle">A <strong>MonoBehaviour method</strong> Unity automatically calls.</li></ul><ul id="26623fc6-f280-805d-a426-c5fe0117ceea" class="bulleted-list"><li style="list-style-type:circle">Runs <strong>whenever</strong> a script or its GameObject is <strong>disabled</strong>.</li></ul><ul id="26623fc6-f280-809c-8b9f-d34ba36dbe5e" class="bulleted-list"><li style="list-style-type:circle">That means it’s triggered when:<ul id="26623fc6-f280-80f6-9dfa-c9852d2ddf3f" class="bulleted-list"><li style="list-style-type:square"><code>gameObject.SetActive(false)</code> is called (whole GameObject disabled).</li></ul><ul id="26623fc6-f280-8038-b3ba-c197ed53f784" class="bulleted-list"><li style="list-style-type:square"><code>myScript.enabled = false</code> is set (just that script disabled).</li></ul><ul id="26623fc6-f280-80b3-9843-e4cdb4de52b5" class="bulleted-list"><li style="list-style-type:square">The object is <strong>destroyed</strong> (<code>Destroy(gameObject)</code> or scene unload).</li></ul><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Flowchart:</summary><div class="indented"><p id="26623fc6-f280-80de-8e35-ebddff9ed2d4" class="">  <br/>      ┌─────────────┐<br/>      │   Awake()   │   ← called once when script instance is created<br/>      └──────┬──────┘<br/>             │<br/>    ┌────────▼────────┐<br/>    │  Is Active?     │<br/>    └──────┬──────────┘<br/>           │Yes<br/>           ▼<br/>    ┌─────────────┐<br/>    │ OnEnable()  │   ← called every time object/script is enabled<br/>    └──────┬──────┘<br/>           │<br/>           ▼<br/>    ┌─────────────┐<br/>    │  Start()    │   ← called once, the first time object is active<br/>    └──────┬──────┘<br/>           │<br/>  ┌────────▼─────────┐<br/>  │ Normal updates…  │  (Update, FixedUpdate, etc.)<br/>  └──────┬───────────┘<br/>         │<br/>┌─────────▼───────────┐<br/>│ If disabled:         │<br/>│   OnDisable()        │<br/>└─────────┬───────────┘<br/>│<br/>┌─────────▼───────────┐<br/>│ If enabled again:    │<br/>│   OnEnable()         │  (Start does NOT run again)<br/>└─────────┬───────────┘<br/>│<br/>┌─────────▼───────────┐<br/>│ If destroyed:        │<br/>│   OnDisable() → OnDestroy() │<br/>└─────────────────────┘</p><p id="26623fc6-f280-809e-b421-cf9e6bd76b6c" class="">
+</p></div></details></li></ul></li></ul><p id="26623fc6-f280-809e-a80d-d68b428b7643" class=""><strong><span style="border-bottom:0.05em solid">Execution Order: </span></strong><code><strong><span style="border-bottom:0.05em solid">Awake()</span></strong></code><strong><span style="border-bottom:0.05em solid"> → </span></strong><code><strong><span style="border-bottom:0.05em solid">OnEnable()</span></strong></code><strong><span style="border-bottom:0.05em solid"> → </span></strong><code><strong><span style="border-bottom:0.05em solid">Start()</span></strong></code></p><hr id="26623fc6-f280-8059-95fc-d7a2c2af4ffc"/><h3 id="26623fc6-f280-8091-b8e7-fdda777d8532" class="">3. Terminology</h3><ul id="26623fc6-f280-802b-a7f7-cbe72502a58d" class="bulleted-list"><li style="list-style-type:disc"><strong>Singleton: </strong><br/>A <strong>singleton</strong> is a design pattern where you ensure that <strong>only one instance</strong> of a class exists in your project and provide a <strong>global point of access</strong> to it.</li></ul><ul id="26623fc6-f280-8094-a1ce-ec19c85010f4" class="bulleted-list"><li style="list-style-type:disc"><strong>Singleton reference:</strong><br/>It’s simply the <strong>global reference</strong> (usually a <code>static</code> variable) that other scripts can use to access that one unique instance of the singleton.</li></ul><hr id="26623fc6-f280-803a-bd13-d0676632e5df"/><h3 id="26623fc6-f280-80c7-85e5-e9ecaa760adf" class="">4. Object Pooling</h3><p id="26623fc6-f280-8092-a5d2-fbd9c01ec003" class="">Object pooling is a design pattern used in <strong>game development</strong> (and other software) to improve performance and reduce memory usage.</p><p id="26623fc6-f280-80b6-b83c-fac95a98ee0b" class="">Instead of repeatedly <strong>instantiating</strong> (creating) and <strong>destroying</strong> objects at runtime (which is expensive in Unity and can cause garbage collection spikes), an <strong>object pool</strong> keeps a collection (pool) of pre-instantiated objects that can be reused.</p><p id="26623fc6-f280-8044-99c5-e1bc0422bffe" class=""><div class="indented"><h3 id="26623fc6-f280-8083-9952-c116b9ecc237" class="">How it works:</h3></div></p><ol type="1" id="26623fc6-f280-80cf-b158-f3ed18c1ceb3" class="numbered-list" start="1"><li>At the start, you <strong>create a pool</strong> of objects (e.g., 20 bullets).</li></ol><ol type="1" id="26623fc6-f280-800b-8439-eb7786317cb1" class="numbered-list" start="2"><li>When you need one, you <strong>take (activate)</strong> an available object from the pool.</li></ol><ol type="1" id="26623fc6-f280-80f4-870b-cef26d15a52a" class="numbered-list" start="3"><li>When it’s no longer needed (e.g., bullet hits something), instead of destroying it, you <strong>deactivate and return it</strong> to the pool.</li></ol><ol type="1" id="26623fc6-f280-8070-8321-f023d395d329" class="numbered-list" start="4"><li>Next time, the same object can be reused instead of creating a new one.</li></ol><p id="26623fc6-f280-804e-b731-cad1a6684158" class=""><div class="indented"><figure class="block-color-gray_background callout" style="white-space:pre-wrap;display:flex" id="26623fc6-f280-8038-a93a-c3dcbc8b1e43"><div style="font-size:1.5em"><span class="icon">💡</span></div><div style="width:100%"><details open=""><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0"><strong>Example Code</strong></summary><div class="indented"><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="26623fc6-f280-805a-be44-f616701f3b78" class="code code-wrap"><code class="language-C#" style="white-space:pre-wrap;word-break:break-all">public class ObjectPool : MonoBehaviour
+{
+public GameObject prefab;
+public int poolSize = 10;
+private List&lt;GameObject&gt; pool;
+
+void Start()
+{
+    pool = new List&lt;GameObject&gt;();
+    for (int i = 0; i &lt; poolSize; i++)
+    {
+        GameObject obj = Instantiate(prefab);
+        obj.SetActive(false);
+        pool.Add(obj);
+    }
+}
+
+public GameObject GetObject()
+{
+    foreach (var obj in pool)
+    {
+        if (!obj.activeInHierarchy)
+        {
+            obj.SetActive(true);
+            return obj;
+        }
+    }
+
+    // Optionally expand pool if none available
+    GameObject newObj = Instantiate(prefab);
+    newObj.SetActive(false);
+    pool.Add(newObj);
+    return newObj;
+}
+
+}</code></pre></div></details></div></figure><p id="26623fc6-f280-806e-9371-e9f849460165" class="">
+</p><p id="26623fc6-f280-808f-844b-cdb19eaa1b04" class=""><strong>Benefit:</strong></p><p id="26623fc6-f280-807c-a6cd-d17cb258ae1e" class="">Faster performance, reduced lag, less garbage collection.</p><p id="26623fc6-f280-8085-a7bd-fa8fcded9a57" class=""><strong>Downside:</strong></p><p id="26623fc6-f280-80f9-afb9-d367bfefc312" class="">Uses memory upfront to keep objects ready, even if not always used.</p></div></p></div></article><span class="sans" style="font-size:14px;padding-top:2em"><hr/><details open="" style="padding-top:1em"><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Inline comments</summary><div class="indented"><div><p style="padding:0.2em"><b>Block text</b>: <mark class="highlight-yellow_background">Every time you call <code>gameObject.SetActive(true)</code><br/>Every time you enable the <strong>component </strong>(<code>myScript.enabled = true</code>)</mark></p><ul class="toggle"><li><div><span class="user" style="padding:0.2em"><img src="https://lh3.googleusercontent.com/a/ACg8ocJxeR6Ndkl886md2S4sa0o6x3t7sRUU27c2l7eKODFDlY8N-w=s100" class="icon user-icon"/><span><b>Anuj Lunawat</b> <time style="font-size:0.8em">Sep 7, 2025, 2:27 AM</time></span></span></div><div style="padding:0.2em"><code><strong>SetActive(bool)</strong></code><br/>• <strong>Belongs to:</strong> <code>GameObject</code><br/>• Controls the <strong>whole GameObject’s active state</strong> (and all its children).<br/>• If you call <code>gameObject.SetActive(false)</code>:<br/>    ◦ The GameObject <strong>and all attached components</strong> (scripts, renderers, colliders, etc.) are disabled.<br/>    ◦ The object disappears from the scene (unless it’s just a data-only object).<br/>👉 Think: <strong>Turn the entire GameObject on/off.<br/>🔹 </strong><code><strong>.enabled</strong></code><br/>• <strong>Belongs to:</strong> <code>Component</code> (like a script, <code>Collider</code>, <code>Renderer</code>, etc.)<br/>• Controls <strong>just that component</strong>.<br/>• If you call <code>myScript.enabled = false</code>:<br/>    ◦ Only that script stops running (<code>Update()</code>, <code>OnEnable()</code>, etc. won’t fire).<br/>    ◦ The GameObject itself stays active.<br/>👉 Think: <strong>Turn just one piece of the GameObject on/off.</strong></div><div style="padding:0.3em"></div></li></ul></div><hr/></div><div class="indented"><div><p style="padding:0.2em"><b>Block text</b>: <mark class="highlight-yellow_background">Every time you call <code>gameObject.SetActive(true)</code><br/>Every time you enable the <strong>component </strong>(<code>myScript.enabled = true</code>)</mark></p><ul class="toggle"><li><div><span class="user" style="padding:0.2em"><img src="https://lh3.googleusercontent.com/a/ACg8ocJxeR6Ndkl886md2S4sa0o6x3t7sRUU27c2l7eKODFDlY8N-w=s100" class="icon user-icon"/><span><b>Anuj Lunawat</b> <time style="font-size:0.8em">Sep 7, 2025, 2:27 AM</time></span></span></div><div style="padding:0.2em"><code><strong>SetActive(bool)</strong></code><br/>• <strong>Belongs to:</strong> <code>GameObject</code><br/>• Controls the <strong>whole GameObject’s active state</strong> (and all its children).<br/>• If you call <code>gameObject.SetActive(false)</code>:<br/>    ◦ The GameObject <strong>and all attached components</strong> (scripts, renderers, colliders, etc.) are disabled.<br/>    ◦ The object disappears from the scene (unless it’s just a data-only object).<br/>👉 Think: <strong>Turn the entire GameObject on/off.<br/>🔹 </strong><code><strong>.enabled</strong></code><br/>• <strong>Belongs to:</strong> <code>Component</code> (like a script, <code>Collider</code>, <code>Renderer</code>, etc.)<br/>• Controls <strong>just that component</strong>.<br/>• If you call <code>myScript.enabled = false</code>:<br/>    ◦ Only that script stops running (<code>Update()</code>, <code>OnEnable()</code>, etc. won’t fire).<br/>    ◦ The GameObject itself stays active.<br/>👉 Think: <strong>Turn just one piece of the GameObject on/off.</strong></div><div style="padding:0.3em"></div></li></ul></div><hr/></div></details><details open="" style="padding-top:1em"><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Resolved inline comments</summary><div class="indented"><div><p style="padding:0.2em"><b>Block text</b>: <mark class="highlight-yellow_background">Every time you call <code>gameObject.SetActive(true)</code><br/>Every time you enable the <strong>component </strong>(<code>myScript.enabled = true</code>)</mark></p><ul class="toggle"><li><div><span class="user" style="padding:0.2em"><img src="https://lh3.googleusercontent.com/a/ACg8ocJxeR6Ndkl886md2S4sa0o6x3t7sRUU27c2l7eKODFDlY8N-w=s100" class="icon user-icon"/><span><b>Anuj Lunawat</b> <time style="font-size:0.8em">Sep 7, 2025, 2:26 AM</time></span></span></div><div style="padding:0.2em"><code><strong>SetActive(bool)</strong></code><br/>• <strong>Belongs to:</strong> <code>GameObject</code><br/>• Controls the <strong>whole GameObject’s active state</strong> (and all its children).<br/>• If you call <code>gameObject.SetActive(false)</code>:<br/>    ◦ The GameObject <strong>and all attached components</strong> (scripts, renderers, colliders, etc.) are disabled.<br/>    ◦ The object disappears from the scene (unless it’s just a data-only object).<br/>👉 Think: <strong>Turn the entire GameObject on/off.<br/>🔹 </strong><code><strong>.enabled</strong></code><br/>• <strong>Belongs to:</strong> <code>Component</code> (like a script, <code>Collider</code>, <code>Renderer</code>, etc.)<br/>• Controls <strong>just that component</strong>.<br/>• If you call <code>myScript.enabled = false</code>:<br/>    ◦ Only that script stops running (<code>Update()</code>, <code>OnEnable()</code>, etc. won’t fire).<br/>    ◦ The GameObject itself stays active.<br/>👉 Think: <strong>Turn just one piece of the GameObject on/off.</strong></div><div style="padding:0.3em"></div></li></ul></div><hr/></div><div class="indented"><div><p style="padding:0.2em"><b>Block text</b>: <mark class="highlight-yellow_background">Every time you call <code>gameObject.SetActive(true)</code><br/>Every time you enable the <strong>component </strong>(<code>myScript.enabled = true</code>)</mark></p><ul class="toggle"><li><div><span class="user" style="padding:0.2em"><img src="https://lh3.googleusercontent.com/a/ACg8ocJxeR6Ndkl886md2S4sa0o6x3t7sRUU27c2l7eKODFDlY8N-w=s100" class="icon user-icon"/><span><b>Anuj Lunawat</b> <time style="font-size:0.8em">Sep 7, 2025, 2:26 AM</time></span></span></div><div style="padding:0.2em"><code><strong>SetActive(bool)</strong></code><br/>• <strong>Belongs to:</strong> <code>GameObject</code><br/>• Controls the <strong>whole GameObject’s active state</strong> (and all its children).<br/>• If you call <code>gameObject.SetActive(false)</code>:<br/>    ◦ The GameObject <strong>and all attached components</strong> (scripts, renderers, colliders, etc.) are disabled.<br/>    ◦ The object disappears from the scene (unless it’s just a data-only object).<br/>👉 Think: <strong>Turn the entire GameObject on/off.<br/>🔹 </strong><code><strong>.enabled</strong></code><br/>• <strong>Belongs to:</strong> <code>Component</code> (like a script, <code>Collider</code>, <code>Renderer</code>, etc.)<br/>• Controls <strong>just that component</strong>.<br/>• If you call <code>myScript.enabled = false</code>:<br/>    ◦ Only that script stops running (<code>Update()</code>, <code>OnEnable()</code>, etc. won’t fire).<br/>    ◦ The GameObject itself stays active.<br/>👉 Think: <strong>Turn just one piece of the GameObject on/off.</strong></div><div style="padding:0.3em"></div></li></ul></div><hr/></div></details></span></body></html>
