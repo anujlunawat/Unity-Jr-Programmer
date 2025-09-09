@@ -249,10 +249,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1cbad1fd59672c44944b0f762c2259f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpawnManager
-  enemyPrefab: {fileID: 2899098955697347072, guid: 1879cf0c2c48f69488b133c05208b635, type: 3}
-  enemyCount: 0
+  enemyPrefabs:
+  - {fileID: 2899098955697347072, guid: 1879cf0c2c48f69488b133c05208b635, type: 3}
+  - {fileID: 5587917781230203525, guid: 9110eaecb4e9bdb40a3b3bc0fe44ca35, type: 3}
   waveNumber: 1
-  powerupPrefab: {fileID: 3876051443626119393, guid: f7cd3c7c0ec1e7c4e8a358e57a249d61, type: 3}
+  powerupPrefab:
+  - {fileID: 3876051443626119393, guid: f7cd3c7c0ec1e7c4e8a358e57a249d61, type: 3}
+  - {fileID: 9178615031470150689, guid: b6aa384c096e0484b9c529e90cab0a85, type: 3}
+  - {fileID: 1930274681302348739, guid: 71f444b03d9324a4cb6edd3b625e6798, type: 3}
+  player: {fileID: 1524378356}
+  projectilePrefab: {fileID: 1133631328154727648, guid: 8c2f3592aeb3ce944b4693d3ab0a3329, type: 3}
 --- !u!1 &1211016355
 GameObject:
   m_ObjectHideFlags: 0
@@ -772,9 +778,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2f06b53d1964434bbccfa6a5390058a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  speed: 5
-  hasPowerup: 0
+  speed: 4.5
   powerupIndicator: {fileID: 900886603}
+  currentPowerUp: 0
+  hangTime: 1.5
+  smashSpeed: 10
+  explosionForce: 50
+  explosionRadius: 50
 --- !u!1 &1661623508
 GameObject:
   m_ObjectHideFlags: 0

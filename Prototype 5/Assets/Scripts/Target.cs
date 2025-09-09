@@ -24,7 +24,7 @@ public class Target : MonoBehaviour
     void Start()
     {
         targetRb = GetComponent<Rigidbody>();
-        transform.position = RandomSpawnPos() ;
+        transform.position = RandomSpawnPos();
         targetRb.AddForce(RandomForce(), ForceMode.Impulse);
         targetRb.AddTorque(RandomTorque(), RandomTorque(), RandomTorque(), ForceMode.Impulse);
 
@@ -48,7 +48,7 @@ public class Target : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     Vector3 RandomForce()
@@ -66,20 +66,30 @@ public class Target : MonoBehaviour
         return new Vector3(Random.Range(-xRange, xRange), ySpawnPos);
     }
 
-    private void OnMouseDown()
+    //private void OnMouseDown()
+    //{
+    //    if (gameManager.isGameActive && !gameManager.paused)
+    //    {
+    //        gameManager.UpdateScore(pointValue);
+    //        Destroy(gameObject);
+    //        Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+    //    }
+    //}
+
+    private void OnTriggerEnter(Collider other)
     {
-        if (gameManager.isGameActive)
+        if (!gameObject.CompareTag("Bad 1"))
+            gameManager.UpdateLives();
+        Destroy(gameObject);
+    }
+
+    public void DestroyTarget()
+    {
+        if (gameManager.isGameActive && !gameManager.paused)
         {
             gameManager.UpdateScore(pointValue);
             Destroy(gameObject);
             Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
         }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!gameObject.CompareTag("Bad 1"))
-            gameManager.gameOver();
-        Destroy(gameObject);
     }
 }

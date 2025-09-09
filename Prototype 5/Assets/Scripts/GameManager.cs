@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     private int score;
 
+    public TextMeshProUGUI livesText;
+    private int lives;
+
     private float spawnRate = 1;
 
     public TextMeshProUGUI gameOverText;
@@ -20,6 +23,9 @@ public class GameManager : MonoBehaviour
     public Button restartButton;
 
     public GameObject titleScreen;
+
+    public bool paused = false;
+    public GameObject pauseScreen;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,13 +43,18 @@ public class GameManager : MonoBehaviour
         gameOverText.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
 
+        lives = 3;
+        livesText.text = "Lives: " + lives;
         isGameActive = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ChangePaused();
+        }
     }
 
     IEnumerator SpawnTarget()
@@ -62,7 +73,17 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Score: " + score;
     }
 
-    public void gameOver()
+    public void UpdateLives()
+    {
+        lives -= 1;
+        livesText.text = "Lives: " + lives;
+        if(lives == 0)
+        {
+            GameOver();
+        }
+    }
+
+    public void GameOver()
     {
         isGameActive = false;
         UpdateScore(score=0);
@@ -73,5 +94,21 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    void ChangePaused()
+    {
+        if (!paused)
+        {
+            paused = true;
+            pauseScreen.SetActive(true);
+            Time.timeScale = 0;
+        }
+        else
+        {
+            paused = false;
+            pauseScreen.SetActive(false);
+            Time.timeScale = 1;
+        }
     }
 }
